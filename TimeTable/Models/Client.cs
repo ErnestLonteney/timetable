@@ -1,14 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TimeTable.Models
 {
     public class Client
     {
         public Guid Id { get; set; }
-        public string FName { get; set; }
-        public string LName { get; set; }
-        public string SName { get; set; }
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }     
+        public string MiddleName { get; set; }
 
+        public virtual ICollection<Course> Courses { get; set; }
+        
+        [NotMapped]
+        public string FullName => FirstName + " " + LastName + " " + MiddleName;
     }
 }

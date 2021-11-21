@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TimeTable.Data;
 using TimeTable.Models;
+using TimeTable.Services;
 
 namespace TimeTable.Controllers
 {
@@ -12,12 +14,23 @@ namespace TimeTable.Controllers
     [ApiController]
     public class ReservationController : ControllerBase
     {
-        public async Task<ActionResult> Reservations(DateTime from, DateTime to)
+        private readonly IReservationService service;
+
+        public ReservationController(IReservationService service)
         {
-            return Ok();
+            this.service = service;
         }
 
+        public async Task<ReservationResponse> MakeReservation(ReservedTime time)
+        {
+            if (ModelState.IsValid)
+            {
+                var res = await service.CreateReservation(time);
+                return res;
+            }
 
+            return null; 
+        }
 
     }
 }

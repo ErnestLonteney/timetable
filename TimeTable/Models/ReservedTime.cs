@@ -7,10 +7,11 @@ namespace TimeTable.Models
 {
     public class ReservedTime
     {
-        public  DateTime ReservetionFrom { get; set; }
+        public DateTime ReservetionFrom { get; set; }
         public DateTime ReservationTo { get; set; }
         public Client Client { get; set; }
+        public Course Course { get; set; }
         public bool IsCanceled { get; set; }
-        public bool IsPayed { get; set; }
+        public bool IsPaid { get; set; }
     }
 }
