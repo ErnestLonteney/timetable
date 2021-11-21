@@ -47,6 +47,7 @@ namespace TimeTable
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:ConnectionString"]);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +74,7 @@ namespace TimeTable
 
             app.UseRouting();
 
+            
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
