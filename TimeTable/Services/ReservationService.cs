@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TimeTable.Data;
 using TimeTable.Models;
@@ -19,10 +20,10 @@ namespace TimeTable.Services
 
         public Task<bool> CanReservOnThisTime(ReservedTime time)
         {
-            return Task.FromResult(true);
+            var res = dataContext.Times.Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.Course.Id);
+
+            return Task.FromResult(res);
         }
-
-
 
         public async Task<ReservationResponse> CreateReservation(ReservedTime time)
         {
