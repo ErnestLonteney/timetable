@@ -18,6 +18,8 @@ namespace TimeTable.Controllers
             this.service = service;
         }
 
+        [Route("CreateCourse")]
+        [HttpPost]
         public async Task<IActionResult> CreateCourse(Course course)
         {
             if (ModelState.IsValid)

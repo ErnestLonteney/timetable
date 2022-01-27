@@ -9,8 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using TimeTable.Data;
+using TimeTable.Data.Repositories;
 using TimeTable.Models;
+using TimeTable.Services;
 
 namespace TimeTable
 {
@@ -28,7 +31,10 @@ namespace TimeTable
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("IdentityConnection")));
+
+            services.AddDbContext<TimeTableDataContext>(options =>
+                      options.UseSqlServer(Configuration.GetConnectionString("MainConnection")));  
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -48,6 +54,10 @@ namespace TimeTable
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddApplicationInsightsTelemetry(Configuration["ApplicationInsights:ConnectionString"]);
+            services.AddSwaggerGen();
+
+            services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<IRepository<ReservedTime>, Repository<ReservedTime>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,9 +82,7 @@ namespace TimeTable
                 app.UseSpaStaticFiles();
             }
 
-            app.UseRouting();
-
-            
+            app.UseRouting();                    
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
@@ -84,6 +92,12 @@ namespace TimeTable
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = String.Empty;
             });
 
             app.UseSpa(spa =>

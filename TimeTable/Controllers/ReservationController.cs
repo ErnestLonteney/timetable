@@ -21,6 +21,8 @@ namespace TimeTable.Controllers
             this.service = service;
         }
 
+        [Route("MakeReservation")]
+        [HttpPost]
         public async Task<ReservationResponse> MakeReservation(ReservedTime time)
         {
             if (ModelState.IsValid)
@@ -31,6 +33,5 @@ namespace TimeTable.Controllers
 
             return null; 
         }
-
     }
 }

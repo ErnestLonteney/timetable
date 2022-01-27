@@ -2,25 +2,25 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using TimeTable.Data;
+using TimeTable.Data.Repositories;
 using TimeTable.Models;
 
 namespace TimeTable.Services
 {
     public class ReservationService : IReservationService
     {
-        private readonly TimeTableDataContext dataContext;
-        private readonly ILogger<CourseService> logger;
+        private readonly IRepository<ReservedTime> _repo;
+        private readonly ILogger<CourseService> _logger;
 
-        public ReservationService()
+        public ReservationService(IRepository<ReservedTime> repo)
         {
-            dataContext = new TimeTableDataContext();
-            // logger = LoggerFactory.Create(); 
+            // _logger = LoggerFactory.Create(); 
+            _repo = repo;
         }
 
         public Task<bool> CanReservOnThisTime(ReservedTime time)
         {
-            var res = dataContext.Times.Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.Course.Id);
+            var res = _repo.GetAll().Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.Course.Id);
 
             return Task.FromResult(res);
         }
@@ -36,14 +36,13 @@ namespace TimeTable.Services
 
             try
             {
-                await dataContext.Times.AddAsync(time);
-                await dataContext.SaveChangesAsync();
+                await _repo.AddAsync(time);
 
                 return new ReservationResponse { IsConfirmed = true };
             }
             catch (Exception e)
             {
-                logger.LogError(e, e.Message);
+                _logger.LogError(e, e.Message);
                 return new ReservationResponse { IsConfirmed = false };
             }
         }
