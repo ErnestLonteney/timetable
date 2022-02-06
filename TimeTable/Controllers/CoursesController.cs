@@ -20,7 +20,7 @@ namespace TimeTable.Controllers
 
         [Route("CreateCourse")]
         [HttpPost]
-        public async Task<IActionResult> CreateCourse(Course course)
+        public async Task<IActionResult> CreateCourse(CourseDTO course)
         {
             if (ModelState.IsValid)
             {

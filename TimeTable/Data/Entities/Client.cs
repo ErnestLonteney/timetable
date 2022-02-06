@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TimeTable.Models
+namespace TimeTable.Data.Entities
 {
     public class Client
     {

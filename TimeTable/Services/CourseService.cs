@@ -3,6 +3,8 @@ using System;
 using System.Threading.Tasks;
 using TimeTable.Data;
 using TimeTable.Models;
+using AutoMapper;
+using TimeTable.Data.Entities;
 
 namespace TimeTable.Services
 {
@@ -10,18 +12,21 @@ namespace TimeTable.Services
     {
         private readonly TimeTableDataContext dataContext;
         private readonly ILogger<CourseService> logger;
+        private readonly IMapper mapper;
 
         public CourseService()
         {
             dataContext = new TimeTableDataContext();
+            mapper = new Mapper(new MapperConfiguration(c => c.CreateMap<CourseDTO, Course>()));
            // logger = LoggerFactory.Create(); 
         }
-        public async Task CreateCourse(Course course)
-        {
+        public async Task CreateCourse(CourseDTO course)
+        {         
             try
             {
-               await dataContext.Courses.AddAsync(course);
-               await dataContext.SaveChangesAsync();
+                var courseDB = mapper.Map<Course>(course);
+                await dataContext.Courses.AddAsync(courseDB);
+                await dataContext.SaveChangesAsync();
             }
             catch (Exception e)
             {

@@ -5,6 +5,6 @@ namespace TimeTable.Services
 {
     public interface ICourseService
     {
-        Task CreateCourse(Course course);
+        Task CreateCourse(CourseDTO course);
     }
 }

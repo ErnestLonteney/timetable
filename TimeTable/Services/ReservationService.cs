@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using TimeTable.Data.Repositories;
 using TimeTable.Models;
+using AutoMapper;
+using TimeTable.Data.Entities;
 
 namespace TimeTable.Services
 {
@@ -11,21 +13,23 @@ namespace TimeTable.Services
     {
         private readonly IRepository<ReservedTime> _repo;
         private readonly ILogger<CourseService> _logger;
+        private readonly IMapper mapper;
 
         public ReservationService(IRepository<ReservedTime> repo)
         {
             // _logger = LoggerFactory.Create(); 
             _repo = repo;
+            mapper = new Mapper(new MapperConfiguration(c => c.CreateMap<ReservedTimeDTO, ReservedTime>()));
         }
 
-        public Task<bool> CanReservOnThisTime(ReservedTime time)
+        public Task<bool> CanReservOnThisTime(ReservedTimeDTO time)
         {
-            var res = _repo.GetAll().Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.Course.Id);
+            var res = _repo.GetAll().Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.CourseId);
 
             return Task.FromResult(res);
         }
 
-        public async Task<ReservationResponse> CreateReservation(ReservedTime time)
+        public async Task<ReservationResponse> CreateReservation(ReservedTimeDTO time)
         {
             var posibility = await CanReservOnThisTime(time);
 
@@ -34,9 +38,12 @@ namespace TimeTable.Services
                 return await GetVariantsFor(time);
             }
 
+
+
             try
             {
-                await _repo.AddAsync(time);
+                var timeDB = mapper.Map<ReservedTime>(time);
+                await _repo.AddAsync(timeDB);
 
                 return new ReservationResponse { IsConfirmed = true };
             }
@@ -48,7 +55,7 @@ namespace TimeTable.Services
         }
 
        
-        public Task<ReservationResponse> GetVariantsFor(ReservedTime time)
+        public Task<ReservationResponse> GetVariantsFor(ReservedTimeDTO time)
         {
             var p = new ReservationResponse
             {

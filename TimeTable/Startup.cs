@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using TimeTable.Data;
+using TimeTable.Data.Entities;
 using TimeTable.Data.Repositories;
 using TimeTable.Models;
 using TimeTable.Services;
@@ -34,7 +35,7 @@ namespace TimeTable
                     Configuration.GetConnectionString("IdentityConnection")));
 
             services.AddDbContext<TimeTableDataContext>(options =>
-                      options.UseSqlServer(Configuration.GetConnectionString("MainConnection")));  
+                      options.UseSqlServer(Configuration.GetConnectionString("MainConnection")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -94,11 +95,7 @@ namespace TimeTable
                 endpoints.MapRazorPages();
             });
             app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                options.RoutePrefix = String.Empty;
-            });
+            app.UseSwaggerUI();
 
             app.UseSpa(spa =>
             {

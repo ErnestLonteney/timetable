@@ -23,7 +23,7 @@ namespace TimeTable.Controllers
 
         [Route("MakeReservation")]
         [HttpPost]
-        public async Task<ReservationResponse> MakeReservation(ReservedTime time)
+        public async Task<ReservationResponse> MakeReservation(ReservedTimeDTO time)
         {
             if (ModelState.IsValid)
             {
