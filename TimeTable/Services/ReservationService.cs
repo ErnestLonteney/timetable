@@ -12,12 +12,12 @@ namespace TimeTable.Services
     public class ReservationService : IReservationService
     {
         private readonly IRepository<ReservedTime> _repo;
-        private readonly ILogger<CourseService> _logger;
         private readonly IMapper mapper;
+        public ILogger<ReservationService> Logger { get; }
 
-        public ReservationService(IRepository<ReservedTime> repo)
+        public ReservationService(IRepository<ReservedTime> repo, ILogger<ReservationService> logger)
         {
-            // _logger = LoggerFactory.Create(); 
+            Logger = logger; 
             _repo = repo;
             mapper = new Mapper(new MapperConfiguration(c => c.CreateMap<ReservedTimeDTO, ReservedTime>()));
         }
@@ -38,8 +38,6 @@ namespace TimeTable.Services
                 return await GetVariantsFor(time);
             }
 
-
-
             try
             {
                 var timeDB = mapper.Map<ReservedTime>(time);
@@ -49,7 +47,7 @@ namespace TimeTable.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                Logger.LogError(e, e.Message);
                 return new ReservationResponse { IsConfirmed = false };
             }
         }

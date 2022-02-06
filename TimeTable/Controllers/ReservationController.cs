@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TimeTable.Data;
 using TimeTable.Models;
 using TimeTable.Services;
@@ -15,6 +16,7 @@ namespace TimeTable.Controllers
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService service;
+        public ILogger<ReservationController> Logger { get; set; }
 
         public ReservationController(IReservationService service)
         {

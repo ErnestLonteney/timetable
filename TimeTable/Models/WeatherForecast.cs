@@ -1,6 +1,6 @@
 using System;
 
-namespace TimeTable
+namespace TimeTable.Models
 {
     public class WeatherForecast
     {
