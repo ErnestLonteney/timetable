@@ -33,7 +33,7 @@ namespace TimeTable
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<ILogger, EFLogger>();
+          //  services.AddSingleton<ILogger, EFLogger>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
@@ -42,7 +42,7 @@ namespace TimeTable
             services.AddDbContext<TimeTableDataContext>(options =>
                       options.UseSqlServer(Configuration.GetConnectionString("MainConnection")));
 
-            services.AddDbContext<EFLoggerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("EFLoggerConnection")));
+            
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

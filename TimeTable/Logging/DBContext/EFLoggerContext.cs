@@ -3,16 +3,15 @@
 namespace TimeTable.Logging.DBContext
 {
     public class EFLoggerContext : DbContext
-    {
-        public EFLoggerContext(DbContextOptions<EFLoggerContext> options)
-            : base(options)
+    {      
+        public EFLoggerContext()
         {
 
         }
 
-        public EFLoggerContext()
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=Logs;Trusted_Connection=True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

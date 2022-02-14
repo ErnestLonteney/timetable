@@ -6,7 +6,7 @@ namespace TimeTable.Logging
 {
     public class EFLogger : ILogger, IDisposable
     {
-        private readonly EFLoggerContext _context;
+        private EFLoggerContext _context;
         private readonly string _category;
 
         public EFLogger(EFLoggerContext context)
@@ -15,9 +15,11 @@ namespace TimeTable.Logging
         }
 
         public IDisposable BeginScope<TState>(TState state) => (IDisposable)this;
-        
 
-        public void Dispose() => _context.Dispose();
+
+        public void Dispose() 
+            {
+            }
 
         public bool IsEnabled(LogLevel logLevel) => true;
 
@@ -38,7 +40,8 @@ namespace TimeTable.Logging
 
                 _context.SaveChangesAsync();
             }
-            catch { }
+            catch 
+            { }
         }
     }
 }

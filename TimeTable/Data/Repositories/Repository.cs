@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,16 +16,20 @@ namespace TimeTable.Data.Repositories
         {
             _dataContext = new TimeTableDataContext();
         }
-        public List<T> GetAll() => _dataContext.Set<T>().ToList();
+        public Task<List<T>> GetAllAsync() => _dataContext.Set<T>().ToListAsync();
 
-        public T GetOneByFilter(Expression<Func<T,bool>> filter) => _dataContext.Set<T>().FirstOrDefault(filter);
+        public Task<T> GetOneByFilterAsync(Expression<Func<T,bool>> filter) => _dataContext.Set<T>().FirstOrDefaultAsync(filter);
 
-        public List<T> GetManyByFilter(Expression<Func<T, bool>> filter) => _dataContext.Set<T>().Where(filter).ToList();
+        public Task<List<T>> GetManyByFilterAsync(Expression<Func<T, bool>> filter) => _dataContext.Set<T>().Where(filter).ToListAsync();
 
-        public async Task AddAsync(T entity)
+        public async Task<int> AddAsync(T entity)
         {
             await _dataContext.AddAsync(entity);
-            await _dataContext.SaveChangesAsync();
+            return await _dataContext.SaveChangesAsync();
         }
+
+        public async Task<bool> IsExistsAsync<K>(K id) => await _dataContext.Set<T>().FindAsync(id) == null;
+
+        public async Task<T> GetOneByIdAsync<K>(K id) => await _dataContext.Set<T>().FindAsync(id);        
     }
 }

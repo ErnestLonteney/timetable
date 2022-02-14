@@ -22,11 +22,13 @@ namespace TimeTable.Services
             mapper = new Mapper(new MapperConfiguration(c => c.CreateMap<ReservedTimeDTO, ReservedTime>()));
         }
 
-        public Task<bool> CanReservOnThisTime(ReservedTimeDTO time)
+        public async Task<bool> CanReservOnThisTime(ReservedTimeDTO time)
         {
-            var res = _repo.GetAll().Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.CourseId);
+            var res = await _repo.GetAllAsync();
+            
+            var exists = res.Any(t => t.ReservetionFrom > time.ReservetionFrom && t.ReservationTo < time.ReservationTo && t.Course.Id == time.CourseId);
 
-            return Task.FromResult(res);
+            return exists;
         }
 
         public async Task<ReservationResponse> CreateReservation(ReservedTimeDTO time)
@@ -58,7 +60,9 @@ namespace TimeTable.Services
             var p = new ReservationResponse
             {
                 IsConfirmed = false,
-                Variants = new DateTime[3] { time.ReservetionFrom.AddDays(1), time.ReservetionFrom.AddDays(2), time.ReservetionFrom.AddDays(3) }
+                Variants = new DateTime[3] { time.ReservetionFrom.AddDays(1), 
+                                             time.ReservetionFrom.AddDays(2), 
+                                             time.ReservetionFrom.AddDays(3) }
             };
 
             return Task.FromResult(p);

@@ -7,12 +7,16 @@ namespace TimeTable.Data.Repositories
 {
     public interface IRepository<T> where T:class
     {
-        List<T> GetAll();
+        Task<List<T>> GetAllAsync();
 
-        T GetOneByFilter(Expression<Func<T, bool>> filter);
+        Task<T> GetOneByFilterAsync(Expression<Func<T, bool>> filter);
 
-        List<T> GetManyByFilter(Expression<Func<T, bool>> filter);
+        Task<List<T>> GetManyByFilterAsync(Expression<Func<T, bool>> filter);
 
-        Task AddAsync(T entity);
+        Task<int> AddAsync(T entity);
+
+        Task<T> GetOneByIdAsync<K>(K id);
+
+        Task<bool> IsExistsAsync<K>(K id);       
     }
 }

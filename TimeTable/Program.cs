@@ -12,7 +12,6 @@ namespace TimeTable
 {
     public class Program
     {
-        private static ILoggerProvider loggerProvider;
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -20,7 +19,8 @@ namespace TimeTable
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureLogging((logging) => logging.AddProvider(loggerProvider))
+               // .ConfigureLogging((logging) => logging.AddEFLogger())
+                .ConfigureLogging((logging) => logging.AddProvider(new FileLogProvider(@"C:\Logs")))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

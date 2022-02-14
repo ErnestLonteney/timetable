@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TimeTable.Data;
-using TimeTable.Data.Entities;
+using TimeTable.Models;
+using TimeTable.Services;
 
 namespace TimeTable.Controllers
 {
@@ -14,95 +12,54 @@ namespace TimeTable.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private readonly TimeTableDataContext _context;
-
-        public ClientsController(TimeTableDataContext context)
+        private readonly IClientService _clientService;
+        public ClientsController(IClientService service)
         {
-            _context = context;
+            _clientService = service;
         }
 
-        // GET: api/Clients
+        [Route("GetClient")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Client>>> GetClients()
+        public async Task<ClientDTO> GetClient(Guid id)
         {
-            return await _context.Clients.ToListAsync();
+            if (id != Guid.Empty)
+            {
+                await _clientService.GetClientByID(id);
+            }
+
+            return null;
         }
 
-        // GET: api/Clients/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Client>> GetClient(Guid id)
+        [Route("GetAllClients")]
+        [HttpGet]
+        public async Task<List<ClientDTO>> GetAllClients()
         {
-            var client = await _context.Clients.FindAsync(id);
-
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            return client;
+            return await _clientService.GetAllClientsAsync();
         }
 
-        // PUT: api/Clients/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(Guid id, Client client)
+        [Route("GetSomeClients")]
+        [HttpGet]
+        public async Task<List<ClientDTO>> GetSomeClients(ClientDTO filter)
         {
-            if (id != client.Id)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                return await _clientService.GetSomeClients(filter);
             }
 
-            _context.Entry(client).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return new List<ClientDTO>();
         }
 
-        // POST: api/Clients
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Route("CreateClient")]
         [HttpPost]
-        public async Task<ActionResult<Client>> PostClient(Client client)
+        public async Task<int> CreateClient(ClientDTO newClient)
         {
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetClient", new { id = client.Id }, client);
-        }
-
-        // DELETE: api/Clients/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteClient(Guid id)
-        {
-            var client = await _context.Clients.FindAsync(id);
-            if (client == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+               return await _clientService.CreateClientAsync(newClient);
             }
 
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return 0;
         }
 
-        private bool ClientExists(Guid id)
-        {
-            return _context.Clients.Any(e => e.Id == id);
-        }
     }
 }
