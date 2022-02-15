@@ -6,5 +6,7 @@ namespace TimeTable.Models
     {
         public bool IsConfirmed { get; set; }
         public DateTime[] Variants { get; set; }
+
+        public virtual ReservetionRequest ByRequest { get; set; } 
     }
 }

@@ -25,15 +25,33 @@ namespace TimeTable.Controllers
 
         [Route("MakeReservation")]
         [HttpPost]
-        public async Task<ReservationResponse> MakeReservation(ReservedTimeDTO time)
+        public async Task<ReservationResponse> MakeReservation(ReservetionRequest time)
         {
             if (ModelState.IsValid)
             {
-                var res = await service.CreateReservation(time);
+                var res = await service.MakeReservation(time);
                 return res;
             }
 
-            return null; 
+            return null;
+        }
+
+
+        [Route("MyReservations")]
+        [HttpGet]
+        public async Task<List<ReservationResponse>> GetMyReservations(Guid clientId)
+        {
+            if (clientId != Guid.Empty)
+                await service.GetMyReservations(clientId);
+
+            return new List<ReservationResponse>();
+        }
+
+        [Route("Test")]
+        [HttpPost]
+        public async Task TestReservation(ReservetionRequest time)
+        {
+
         }
     }
 }

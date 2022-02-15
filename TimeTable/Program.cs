@@ -20,7 +20,7 @@ namespace TimeTable
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                // .ConfigureLogging((logging) => logging.AddEFLogger())
-                .ConfigureLogging((logging) => logging.AddProvider(new FileLogProvider(@"C:\Logs")))
+              //  .ConfigureLogging((logging) => logging.AddProvider(new FileLogProvider(@"C:\Logs")))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

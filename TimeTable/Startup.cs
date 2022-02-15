@@ -42,7 +42,9 @@ namespace TimeTable
             services.AddDbContext<TimeTableDataContext>(options =>
                       options.UseSqlServer(Configuration.GetConnectionString("MainConnection")));
 
-            
+            services.AddScoped<IRepository<Course>, Repository<Course>>();
+            services.AddScoped<IRepository<Client>, Repository<Client>>();
+            services.AddScoped<IRepository<ReservedTime>, Repository<ReservedTime>>();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

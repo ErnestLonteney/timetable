@@ -6,6 +6,7 @@ using TimeTable.Data.Repositories;
 using TimeTable.Models;
 using AutoMapper;
 using TimeTable.Data.Entities;
+using System.Collections.Generic;
 
 namespace TimeTable.Services
 {
@@ -19,10 +20,10 @@ namespace TimeTable.Services
         {
             Logger = logger; 
             _repo = repo;
-            mapper = new Mapper(new MapperConfiguration(c => c.CreateMap<ReservedTimeDTO, ReservedTime>()));
+            mapper = new Mapper(new MapperConfiguration(c => c.CreateMap<ReservetionRequest, ReservedTime>()));
         }
 
-        public async Task<bool> CanReservOnThisTime(ReservedTimeDTO time)
+        public async Task<bool> CanReservOnThisTime(ReservetionRequest time)
         {
             var res = await _repo.GetAllAsync();
             
@@ -31,13 +32,13 @@ namespace TimeTable.Services
             return exists;
         }
 
-        public async Task<ReservationResponse> CreateReservation(ReservedTimeDTO time)
+        public async Task<ReservationResponse> MakeReservation(ReservetionRequest time)
         {
             var posibility = await CanReservOnThisTime(time);
 
             if (!posibility)
             {
-                return await GetVariantsFor(time);
+                return new ReservationResponse { IsConfirmed = false, Variants = GetVariantsFor(time), ByRequest = time };
             }
 
             try
@@ -45,27 +46,35 @@ namespace TimeTable.Services
                 var timeDB = mapper.Map<ReservedTime>(time);
                 await _repo.AddAsync(timeDB);
 
-                return new ReservationResponse { IsConfirmed = true };
+                return new ReservationResponse { IsConfirmed = true, ByRequest = time };
             }
             catch (Exception e)
             {
                 Logger.LogError(e, e.Message);
-                return new ReservationResponse { IsConfirmed = false };
+                return new ReservationResponse { IsConfirmed = false, ByRequest = time };
             }
         }
 
-       
-        public Task<ReservationResponse> GetVariantsFor(ReservedTimeDTO time)
+        public async Task<List<ReservationResponse>> GetMyReservations(Guid clientId)
         {
-            var p = new ReservationResponse
-            {
-                IsConfirmed = false,
-                Variants = new DateTime[3] { time.ReservetionFrom.AddDays(1), 
-                                             time.ReservetionFrom.AddDays(2), 
-                                             time.ReservetionFrom.AddDays(3) }
-            };
+            var reservations = await _repo.GetManyByFilterAsync(x => x.Client.Id == clientId);
 
-            return Task.FromResult(p);
+            var times = mapper.Map<List<ReservetionRequest>>(reservations);
+
+           return times.Select(x => new ReservationResponse 
+                              { 
+                                 ByRequest = x, 
+                                 IsConfirmed = !x.IsCanceled, 
+                                 Variants = x.IsCanceled ? GetVariantsFor(x) : null 
+                              }).ToList();
+        }
+
+       
+        public DateTime[] GetVariantsFor(ReservetionRequest time)
+        {
+            return new DateTime[3] { time.ReservetionFrom.AddDays(1),
+                                             time.ReservetionFrom.AddDays(2),
+                                             time.ReservetionFrom.AddDays(3) };
         }
     }
 }

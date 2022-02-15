@@ -6,6 +6,7 @@ using TimeTable.Models;
 using AutoMapper;
 using TimeTable.Data.Entities;
 using TimeTable.Data.Repositories;
+using System.Collections.Generic;
 
 namespace TimeTable.Services
 {
@@ -32,6 +33,21 @@ namespace TimeTable.Services
             {
                 logger.LogError(e, e.Message);
             }
+        }
+
+        public async Task<List<CourseDTO>> GetAllCoursesAsync()
+        {
+            try
+            {
+                var courses = await courseConext.GetAllAsync();
+                return mapper.Map<List<CourseDTO>>(courses);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, e.Message);
+            }
+
+            return null;
         }
     }
 }

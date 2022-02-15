@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TimeTable.Data;
 using TimeTable.Data.Entities;
@@ -35,6 +36,13 @@ namespace TimeTable.Controllers
             }
 
             return BadRequest();
+        }
+
+        [Route("AllCourses")]
+        [HttpGet]
+        public async Task<List<CourseDTO>> GetAllCourses()
+        {
+            return await service.GetAllCoursesAsync();
         }
     }
 }

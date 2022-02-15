@@ -2,7 +2,7 @@
 
 namespace TimeTable.Models
 {
-    public class ReservedTimeDTO
+    public class ReservetionRequest
     {
         public Guid Id { get; set; }
         public DateTime ReservetionFrom { get; set; }
